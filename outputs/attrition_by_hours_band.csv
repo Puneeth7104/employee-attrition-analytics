@@ -1,0 +1,5 @@
+hours_band,employees,exits,person_years,annual_attrition_pct,share_exited_pct,ci_low_pct,ci_high_pct
+Under 40h,408,149,851.5,17.5,36.5,14.8,20.5
+40-45h,992,404,1966.8,20.5,40.7,18.6,22.6
+45-50h,888,346,1754.1,19.7,39.0,17.7,21.9
+50h+,312,136,612.1,22.2,43.6,18.6,26.3

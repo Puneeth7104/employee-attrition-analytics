@@ -1,0 +1,5 @@
+comp_band,employees,exits,person_years,annual_attrition_pct,share_exited_pct,ci_low_pct,ci_high_pct
+Below 0.90,498,268,818.2,32.8,53.8,29.0,36.9
+0.90-1.00,816,363,1617.3,22.4,44.5,20.2,24.9
+1.00-1.10,772,263,1606.1,16.4,34.1,14.5,18.5
+Above 1.10,514,141,1143.0,12.3,27.4,10.4,14.5

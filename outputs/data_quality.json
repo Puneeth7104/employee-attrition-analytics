@@ -1,0 +1,17 @@
+{
+  "rows_raw": 2605,
+  "duplicate_rows_removed": 5,
+  "duplicate_employee_ids_after_dedup": 0,
+  "missing_values": {
+    "performance_rating": 52,
+    "avg_weekly_hours": 39
+  },
+  "exit_date_missing_for_active": 1565,
+  "exit_before_hire": 0,
+  "attrited_flag_vs_exit_date_mismatch": 0,
+  "negative_or_zero_tenure": 0,
+  "compa_ratio_out_of_range": 0,
+  "weekly_hours_out_of_range": 0,
+  "rows_clean": 2600,
+  "personal_data_fields": "none (only anonymous employee_id; no name, age, gender, address or contact info)"
+}

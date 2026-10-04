@@ -1,0 +1,9 @@
+department,employees,exits,person_years,annual_attrition_pct,share_exited_pct,ci_low_pct,ci_high_pct
+Customer Support,413,201,820.5,24.5,48.7,21.2,28.1
+Engineering,741,267,1497.4,17.8,36.0,15.8,20.1
+Finance,205,59,466.1,12.7,28.8,9.6,16.3
+HR,137,50,294.2,17.0,36.5,12.6,22.4
+Marketing,212,74,448.8,16.5,34.9,12.9,20.7
+Operations,281,96,547.7,17.5,34.2,14.2,21.4
+Product,87,30,161.3,18.6,34.5,12.5,26.6
+Sales,524,258,948.8,27.2,49.2,24.0,30.7

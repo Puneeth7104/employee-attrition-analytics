@@ -1,0 +1,9 @@
+variable,test,statistic,p_value,effect_size,effect_measure,significant_at_5pct
+department,Chi-square,55.3,1.2978110404088532e-09,0.146,Cramer's V,True
+comp_band,Chi-square,91.7,9.436304046806945e-20,0.188,Cramer's V,True
+hours_band,Chi-square,4.32,0.22927731167523963,0.041,Cramer's V,False
+performance_group,Chi-square,12.2,0.006715168148156939,0.069,Cramer's V,True
+job_level,Chi-square,11.87,0.01834569791707119,0.068,Cramer's V,True
+compa_ratio,Mann-Whitney U,618730.0,1.9422495484523214e-24,0.382,P(leaver > stayer),True
+avg_weekly_hours,Mann-Whitney U,830434.0,0.2728443892916764,0.513,P(leaver > stayer),False
+overtime_hours_month,Mann-Whitney U,834368.0,0.19043615764512623,0.515,P(leaver > stayer),False

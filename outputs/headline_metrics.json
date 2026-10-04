@@ -1,0 +1,13 @@
+{
+  "employees": 2600,
+  "exits": 1035,
+  "active_at_snapshot": 1565,
+  "person_years": 5184.6,
+  "annual_attrition_pct_overall": 20.0,
+  "annual_attrition_pct_last_12m": 20.4,
+  "avg_monthly_attrition_pct_last_12m": 1.7,
+  "early_exit_90d_pct": 5.6,
+  "early_exit_12m_pct": 27.7,
+  "window_start": "2023-01-01",
+  "snapshot": "2026-09-30"
+}

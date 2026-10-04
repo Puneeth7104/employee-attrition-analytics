@@ -1,0 +1,5 @@
+performance_group,employees,exits,person_years,annual_attrition_pct,share_exited_pct,ci_low_pct,ci_high_pct
+Low (1-2),521,240,1006.3,23.8,46.1,20.9,27.1
+Solid (3-4),1808,691,3626.5,19.1,38.2,17.7,20.5
+Top (5),219,88,448.8,19.6,40.2,15.7,24.2
+Unrated,52,16,103.0,15.5,30.8,8.9,25.2

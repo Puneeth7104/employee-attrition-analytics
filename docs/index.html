@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Employee Attrition Analytics</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1d2733; --muted: #667085; --line: #e3e7ec;
+    --accent: #2a6fdb; --bad: #d9534f; --grey: #aab4c0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #11161c; --card: #1a212a; --text: #e6ebf0; --muted: #9aa7b5; --line: #2a3441;
+            --accent: #5b9bff; --bad: #ff7a73; --grey: #5d6b7b; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  h2 { font-size: 16px; margin: 0 0 10px; }
+  .sub { color: var(--muted); margin: 0 0 16px; }
+  .banner { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--bad);
+            border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; color: var(--muted); }
+  .controls { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  select { font: inherit; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--line);
+           background: var(--card); color: var(--text); }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .kpi, .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  .kpi .v { font-size: 26px; font-weight: 650; }
+  .kpi .l { color: var(--muted); font-size: 13px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 14px; margin-bottom: 14px; }
+  .chartbox { position: relative; height: 280px; }
+  .chartbox.tall { height: 420px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; }
+  td.sig { color: var(--bad); font-weight: 600; }
+  ul { margin: 6px 0 0 18px; padding: 0; color: var(--muted); }
+  li { margin-bottom: 4px; }
+  .note { color: var(--muted); font-size: 13px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Employee Attrition Analytics</h1>
+  <p class="sub" id="subtitle"></p>
+  <div class="banner"><strong>Synthetic data.</strong> The workforce records are generated to demonstrate the method;
+    nothing here describes a real company. Attrition rate = exits per 100 person-years.</div>
+
+  <div class="controls">
+    <label for="dept"><strong>Department</strong></label>
+    <select id="dept"></select>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="grid">
+    <div class="card"><h2>Monthly attrition rate (%)</h2><div class="chartbox"><canvas id="cMonthly"></canvas></div></div>
+    <div class="card"><h2>Annual attrition, trailing 12 months (%)</h2><div class="chartbox"><canvas id="cT12"></canvas></div></div>
+  </div>
+  <div class="grid">
+    <div class="card"><h2>By tenure band (% per year)</h2><div class="chartbox"><canvas id="cTenure"></canvas></div>
+      <p class="note">Each person counts toward a band only for the time spent in it.</p></div>
+    <div class="card"><h2>By pay position (compa-ratio)</h2><div class="chartbox"><canvas id="cComp"></canvas></div></div>
+    <div class="card"><h2>By weekly hours</h2><div class="chartbox"><canvas id="cHours"></canvas></div></div>
+    <div class="card"><h2>By performance</h2><div class="chartbox"><canvas id="cPerf"></canvas></div></div>
+  </div>
+  <div class="grid">
+    <div class="card"><h2>Departments compared (% per year)</h2><div class="chartbox"><canvas id="cDept"></canvas></div></div>
+    <div class="card"><h2>Left within 12 months of hire, by department (%)</h2><div class="chartbox"><canvas id="cEarly"></canvas></div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <h2>What is associated with leaving? (all employees)</h2>
+    <p class="note" style="margin-top:0">Rate ratios from a Poisson regression with person-years exposure. 1.30 means a 30% higher exit rate
+      with other factors held equal; below 1 means lower. Departments are compared with Engineering, tenure bands with 5+ years.</p>
+    <div class="chartbox tall"><canvas id="cModel"></canvas></div>
+    <table id="modelTable"></table>
+  </div>
+
+  <div class="card">
+    <h2>Caveats</h2>
+    <ul>
+      <li>The data is synthetic, so the patterns demonstrate the analysis rather than report real findings.</li>
+      <li>Associations are not proof of cause. Pay, workload and tenure are related, and manager quality or personal reasons are not measured.</li>
+      <li>Voluntary and involuntary exits are not separated.</li>
+      <li>Only hires from 2023 onward are used for early-tenure measures, because earlier leavers are absent from the data.</li>
+      <li>Small groups have wide uncertainty - check the confidence intervals in the tooltips.</li>
+      <li>Privacy: only an anonymous employee ID is stored; no names, ages, gender or contact details.</li>
+    </ul>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<script>
+(function () {
+  var D = window.DASHBOARD_DATA;
+  if (!D) { document.body.innerHTML = "<p style='padding:20px'>data.js failed to load.</p>"; return; }
+  if (typeof Chart === "undefined") { document.getElementById("subtitle").textContent = "Chart library failed to load (check your internet connection)."; return; }
+
+  var css = getComputedStyle(document.documentElement);
+  function col(n) { return css.getPropertyValue(n).trim(); }
+  var ACCENT = col("--accent"), BAD = col("--bad"), GREY = col("--grey"), TEXT = col("--text"), LINE = col("--line");
+  Chart.defaults.color = col("--muted");
+  Chart.defaults.borderColor = LINE;
+  Chart.defaults.maintainAspectRatio = false;
+
+  document.getElementById("subtitle").textContent =
+    "Observation window " + D.meta.window_start + " to " + D.meta.snapshot;
+
+  var charts = {};
+  function draw(id, config) {
+    if (charts[id]) { charts[id].destroy(); }
+    charts[id] = new Chart(document.getElementById(id), config);
+  }
+  function pct(v) { return v == null ? "n/a" : v.toFixed(1) + "%"; }
+
+  function barConfig(rows, labelKey, opts) {
+    opts = opts || {};
+    return {
+      type: "bar",
+      data: {
+        labels: rows.map(function (r) { return String(r[labelKey]); }),
+        datasets: [{ data: rows.map(function (r) { return r.annual_attrition_pct; }),
+                     backgroundColor: opts.colors || ACCENT }]
+      },
+      options: {
+        indexAxis: opts.horizontal ? "y" : "x",
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: function (c) {
+            var r = rows[c.dataIndex];
+            return r.annual_attrition_pct + "% per year (95% CI " + r.ci_low_pct + "-" + r.ci_high_pct + "), " +
+                   r.exits + " exits over " + r.person_years + " person-years";
+          } } }
+        },
+        scales: { x: { beginAtZero: true }, y: { beginAtZero: true } }
+      }
+    };
+  }
+
+  function render(dept) {
+    var s = D.slices[dept];
+    var k = s.kpis;
+    var cards = [
+      ["Employees", k.employees.toLocaleString()],
+      ["Exits in window", k.exits.toLocaleString()],
+      ["Annual attrition (window)", pct(k.annual_rate)],
+      ["Annual attrition (last 12 mo)", pct(k.t12m_rate)],
+      ["Left within 12 months of hire", pct(k.early_12m)]
+    ];
+    document.getElementById("kpis").innerHTML = cards.map(function (c) {
+      return '<div class="kpi"><div class="v">' + c[1] + '</div><div class="l">' + c[0] + "</div></div>";
+    }).join("");
+
+    var months = s.monthly.map(function (m) { return m.month; });
+    draw("cMonthly", { type: "bar",
+      data: { labels: months, datasets: [{ data: s.monthly.map(function (m) { return m.monthly_attrition_pct; }), backgroundColor: ACCENT }] },
+      options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { maxTicksLimit: 8 } }, y: { beginAtZero: true } } } });
+    draw("cT12", { type: "line",
+      data: { labels: months, datasets: [{ data: s.monthly.map(function (m) { return m.annual_attrition_pct_t12m; }),
+              borderColor: BAD, backgroundColor: BAD, borderWidth: 3, pointRadius: 0, spanGaps: false }] },
+      options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { maxTicksLimit: 8 } }, y: { beginAtZero: true } } } });
+
+    draw("cTenure", barConfig(s.tenure, "tenure_band"));
+    draw("cComp", barConfig(s.comp, "comp_band"));
+    draw("cHours", barConfig(s.hours, "hours_band"));
+    draw("cPerf", barConfig(s.performance, "performance_group"));
+
+    var depColors = D.departments.map(function (r) { return r.department === dept ? BAD : ACCENT; });
+    draw("cDept", barConfig(D.departments, "department", { horizontal: true, colors: depColors }));
+
+    var early = D.early_by_dept;
+    draw("cEarly", { type: "bar",
+      data: { labels: early.map(function (r) { return r.department; }),
+              datasets: [{ data: early.map(function (r) { return r.exit_12m_pct; }),
+                           backgroundColor: early.map(function (r) { return r.department === dept ? BAD : ACCENT; }) }] },
+      options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
+  }
+
+  // regression chart + table (always all employees)
+  function labelFor(t) {
+    var map = { "compa_ratio_per_0.1": "Pay: +0.1 compa-ratio", "weekly_hours_per_5h": "Workload: +5 weekly hours",
+      "perf_low_1_2": "Low performer (vs 3-4)", "perf_top_5": "Top performer (vs 3-4)",
+      "perf_unrated": "Unrated (vs 3-4)", "job_level": "Job level: +1" };
+    if (map[t]) return map[t];
+    return t.replace("department_", "Dept: ").replace("tenure_", "Tenure ");
+  }
+  function fmtP(p) { return p < 0.001 ? "<0.001" : p.toFixed(3); }
+  var model = D.model.slice().sort(function (a, b) { return a.rate_ratio - b.rate_ratio; });
+  draw("cModel", { type: "bar",
+    data: { labels: model.map(function (m) { return labelFor(m.term); }),
+            datasets: [{ data: model.map(function (m) { return m.rate_ratio; }),
+                         backgroundColor: model.map(function (m) { return m.significant_at_5pct ? BAD : GREY; }) }] },
+    options: { indexAxis: "y",
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (c) {
+        var m = model[c.dataIndex];
+        return "Rate ratio " + m.rate_ratio + " (95% CI " + m.ci_low + "-" + m.ci_high + "), p " + (m.p_value < 0.001 ? "<0.001" : "= " + m.p_value.toFixed(3));
+      } } } },
+      scales: { x: { min: 0, title: { display: true, text: "Rate ratio (1 = no difference); red = significant at 5%" } } } } });
+  document.getElementById("modelTable").innerHTML =
+    "<tr><th>Factor</th><th>Rate ratio</th><th>95% CI</th><th>p-value</th></tr>" +
+    model.slice().reverse().map(function (m) {
+      return "<tr><td>" + labelFor(m.term) + "</td><td class='" + (m.significant_at_5pct ? "sig" : "") + "'>" + m.rate_ratio.toFixed(2) +
+             "</td><td>" + m.ci_low.toFixed(2) + " - " + m.ci_high.toFixed(2) + "</td><td>" + fmtP(m.p_value) + "</td></tr>";
+    }).join("");
+
+  var sel = document.getElementById("dept");
+  Object.keys(D.slices).forEach(function (name) {
+    var o = document.createElement("option");
+    o.value = name; o.textContent = name === "All" ? "All departments" : name;
+    sel.appendChild(o);
+  });
+  sel.addEventListener("change", function () { render(sel.value); });
+  render("All");
+})();
+</script>
+</body>
+</html>

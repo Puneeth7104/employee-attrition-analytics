@@ -1,0 +1,18 @@
+term,rate_ratio,ci_low,ci_high,p_value,significant_at_5pct
+department_Customer Support,1.346,1.121,1.617,0.0014872304622934873,True
+department_Finance,0.762,0.573,1.013,0.061056004198686065,False
+department_HR,0.927,0.683,1.257,0.6237980389180962,False
+department_Marketing,0.981,0.756,1.274,0.8849138186264744,False
+department_Operations,0.987,0.78,1.249,0.9126032883245092,False
+department_Product,1.055,0.723,1.541,0.7799794624136624,False
+department_Sales,1.554,1.309,1.846,4.931020920473372e-07,True
+compa_ratio_per_0.1,0.734,0.696,0.775,0.0,True
+weekly_hours_per_5h,1.035,0.966,1.109,0.3340328511713535,False
+perf_low_1_2,1.332,1.149,1.544,0.00014127602310320952,True
+perf_top_5,1.068,0.855,1.335,0.5609714811699598,False
+perf_unrated,0.851,0.518,1.399,0.5251456452449448,False
+job_level,0.955,0.904,1.009,0.10128030734262117,False
+tenure_0-6 months,1.8,1.488,2.179,1.55853041583498e-09,True
+tenure_6-12 months,2.378,1.964,2.878,0.0,True
+tenure_1-2 years,1.506,1.238,1.831,4.079561437375645e-05,True
+tenure_2-5 years,1.098,0.919,1.311,0.30401928538024503,False
