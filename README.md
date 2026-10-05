@@ -8,6 +8,7 @@ Uses workforce data to understand what is associated with employee turnover and 
 
 * **Streamlit app (fully interactive):** https://employee-attrition-analytics-bzseznymasmrv5tfnyabnf.streamlit.app/
 * **GitHub Pages (static, with department selector):** https://puneeth7104.github.io/-Employee-Attrition-Analytics/
+* **Project Report** : _https://github.com/Puneeth7104/employee-attrition-analytics/blob/main/Employee_Attrition_Report.pdf_
 
 ## Project layout
 
